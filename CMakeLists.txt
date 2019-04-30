@@ -86,6 +86,7 @@ add_link_options(-no-pie)
 
 option(BUILD_LIBUI "Build libui frontend" ON)
 option(BUILD_SWITCH "Build switch fronted" OFF)
+option(BUILD_SDL "Build libui frontend" ON)
 
 add_subdirectory(src)
 
@@ -94,6 +95,10 @@ if (BUILD_LIBUI)
 endif()
 if (BUILD_SWITCH)
     add_subdirectory(src/switch)
+endif()
+
+if (BUILD_LIBUI)
+	add_subdirectory(src/sdl)
 endif()
 
 configure_file(
