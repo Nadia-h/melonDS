@@ -7,8 +7,15 @@ fi
 
 mkdir -p dist
 
-for lib in $(ldd melonDS.exe | grep mingw | sed "s/.*=> //" | sed "s/(.*)//"); do
-	cp "${lib}" dist
-done
+executables=(melonDS.exe melonDS-sdl.exe)
 
-cp melonDS.exe romlist.bin dist
+for exe in "${executables[@]}"; do
+	if [[ -f $exe ]]; then
+		for lib in $(ldd $exe | grep mingw | sed "s/.*=> //" | sed "s/(.*)//"); do
+			cp "${lib}" dist
+		done
+
+		cp $exe dist
+	fi
+done
+cp romlist.bin dist
