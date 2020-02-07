@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL2_framerate.h>
 
 #include "EmuWindow.h"
 #include "ConfPath.h"
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
 #endif
 
 	GPU3D::InitRenderer(false);
-	NDS::LoadROM(argv[1], sav_name, true);
+	NDS::LoadROM(argv[1], sav_name, false);
 
     SDL_AudioDeviceID audio;
 
@@ -78,6 +79,10 @@ int main(int argc, char** argv) {
     whatIwant.samples = 1024;
     whatIwant.callback = audio_callback;
 	audio = SDL_OpenAudioDevice(NULL, 0, &whatIwant, &whatIget, 0);
+
+	FPSmanager fps;
+	SDL_initFramerate(&fps);
+	SDL_setFramerate(&fps, 60);
 
 	SDL_Event e;
 	u32 keys = 0xFFFF;
@@ -148,6 +153,7 @@ int main(int argc, char** argv) {
 		NDS::RunFrame();
 		auto front = GPU::FrontBuffer;
 		window->update(GPU::Framebuffer[front][0], GPU::Framebuffer[front][1]);
+		SDL_framerateDelay(&fps);
 	}
 
 	
