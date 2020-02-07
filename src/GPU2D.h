@@ -20,7 +20,6 @@
 #define GPU2D_H
 
 #include "types.h"
-
 #include "Savestate.h"
 
 // GPU2DBase contains all of the memory interface
