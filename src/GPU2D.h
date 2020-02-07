@@ -19,6 +19,8 @@
 #ifndef GPU2D_H
 #define GPU2D_H
 
+#include "Savestate.h"
+
 class GPU2D
 {
 public:
