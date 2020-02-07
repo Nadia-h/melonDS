@@ -56,6 +56,14 @@ int main(int argc, char** argv) {
 	strcpy(sav_name + (arglen - 4), ".sav");
 
 	NDS::Init();
+
+#ifdef JIT_ENABLED
+	Config::JIT_Enable = true;
+	Config::JIT_MaxBlockSize = 16;
+	Config::JIT_BrancheOptimisations = true;
+	Config::JIT_LiteralOptimisations = true;
+#endif
+
 	GPU3D::InitRenderer(false);
 	NDS::LoadROM(argv[1], sav_name, true);
 
