@@ -9,10 +9,10 @@ EmuWindow::EmuWindow() :
 {
 	window = SDL_CreateWindow(
 		"melonDS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		256, 384, SDL_WINDOW_RESIZABLE
+		256, 384, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
 	);
 
-	rend = SDL_CreateRenderer(window, 0, 0);
+	rend = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
 	emu_texture = SDL_CreateTexture(
 		rend, SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_STREAMING,
