@@ -23,7 +23,7 @@ public:
     {
         for (int i = 0; i < 16; i++)
             Mapping[i] = (Reg)-1;
-        
+
         PCAllocatableAsSrc = ~(pcAllocatableAsSrc
             ? 0
             : (1 << 15));
@@ -95,7 +95,7 @@ public:
         LiteralsLoaded = 0;
     }
 
-	void Prepare(bool thumb, int i)
+    BitSet32 GetPushRegs()
     {
         FetchedInstr instr = Instrs[i];
 
