@@ -8,7 +8,7 @@
 
 #include "ConfPath.h"
 
-const char* conf_dir_name = "melonDS/";
+const char* conf_dir_name = "melonDS-sdl/";
 char* conf_path;
 
 bool create_conf_path() {
