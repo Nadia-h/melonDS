@@ -56,6 +56,21 @@ int main(int argc, char** argv) {
 	strcpy(sav_name, argv[1]);
 	strcpy(sav_name + (arglen - 4), ".sav");
 
+
+	SDL_AudioSpec req;
+	req.channels = 2;
+	req.format = AUDIO_S16SYS;
+	req.freq = 32768;
+	req.samples = 1024;
+	req.callback = &audio_callback;
+
+	SDL_AudioSpec out;
+	SDL_OpenAudio(&req, &out);
+
+	FPSmanager fps;
+	SDL_initFramerate(&fps);
+	SDL_setFramerate(&fps, 60);
+
 	NDS::Init();
 
 #ifdef JIT_ENABLED
@@ -68,21 +83,8 @@ int main(int argc, char** argv) {
 	GPU3D::InitRenderer(false);
 	NDS::LoadROM(argv[1], sav_name, false);
 
-    SDL_AudioDeviceID audio;
-
-    int audio_freq = 48000; // TODO: make configurable?
-    SDL_AudioSpec whatIwant, whatIget;
-    memset(&whatIwant, 0, sizeof(SDL_AudioSpec));
-    whatIwant.freq = audio_freq;
-    whatIwant.format = AUDIO_S16LSB;
-    whatIwant.channels = 2;
-    whatIwant.samples = 1024;
-    whatIwant.callback = audio_callback;
-	audio = SDL_OpenAudioDevice(NULL, 0, &whatIwant, &whatIget, 0);
-
-	FPSmanager fps;
-	SDL_initFramerate(&fps);
-	SDL_setFramerate(&fps, 60);
+	SPU::InitOutput();
+	SDL_PauseAudio(0);
 
 	SDL_Event e;
 	u32 keys = 0xFFFF;
@@ -146,8 +148,6 @@ int main(int argc, char** argv) {
 					break;
 			}
 		}
-
-		SPU::InitOutput();
 
 		NDS::SetKeyMask(keys);
 		NDS::RunFrame();
