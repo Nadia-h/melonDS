@@ -105,6 +105,28 @@ int main(int argc, char** argv) {
 				case SDL_KEYUP:
 				case SDL_KEYDOWN: {
 					bool pressed = e.key.state == SDL_PRESSED;
+
+					if (pressed) {
+						switch (e.key.keysym.sym) {
+							case SDLK_F11:
+								window->set_fullscreen(!window->get_fullscreen());
+								break;
+							case SDLK_PLUS:
+							case SDLK_MINUS: {
+								int x, y;
+								window->get_content_size(x, y);
+								int scale = x / 256;
+								int rem = x % 256;
+								
+								if (e.key.keysym.sym == SDLK_PLUS) {
+									window->set_integer_size(scale + 1);
+								} else {
+									window->set_integer_size(scale + rem == scale ? scale - 1 : scale);
+								}
+							}
+						}
+					}
+
 					for (int i = 0; keymap[i][0] != 0; i++) {
 						if (keymap[i][0] == e.key.keysym.sym) {
 							if (!pressed) keys |= (1 << i);

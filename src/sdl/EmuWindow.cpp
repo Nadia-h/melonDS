@@ -1,16 +1,19 @@
 
+#include <tuple>
 #include <SDL2/SDL.h>
 
 #include "../types.h"
 #include "EmuWindow.h"
 
 EmuWindow::EmuWindow() :
-	window(), gl_window(), rend(), emu_texture()
+	window(), gl_window(), rend(), emu_texture(), fullscreen()
 {
 	window = SDL_CreateWindow(
 		"melonDS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		256, 384, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
 	);
+
+	SDL_SetWindowMinimumSize(window, 256, 384);
 
 	rend = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
@@ -58,4 +61,28 @@ void EmuWindow::update(u32* top, u32* bottom) {
 
 auto EmuWindow::get_window_id() -> u32 {
 	return SDL_GetWindowID(window);
+}
+
+auto EmuWindow::set_fullscreen(bool fs) -> void {
+	SDL_SetWindowFullscreen(window, fs ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+}
+
+auto EmuWindow::get_fullscreen() -> bool {
+	return SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP;
+}
+
+auto EmuWindow::get_size(int& w, int& h) -> void {
+	SDL_GetWindowSize(window, &w, &h);
+}
+
+auto EmuWindow::set_size(u32 w, u32 h) -> void {
+	SDL_SetWindowSize(window, w, h);
+}
+
+auto EmuWindow::get_content_size(int& w, int& h) -> void {
+	SDL_GetRendererOutputSize(rend, &w, &h);
+}
+
+auto EmuWindow::set_integer_size(u32 factor) -> void {
+	SDL_SetWindowSize(window, 256 * factor, 384 * factor);
 }

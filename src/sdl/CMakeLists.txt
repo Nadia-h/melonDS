@@ -1,5 +1,7 @@
 project(melonDS-sdl)
 
+set(CMAKE_CXX_STANDARD 14)
+
 add_executable(melonDS-sdl
 	main.cpp
 	ConfPath.cpp
