@@ -11,6 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 project(melonDS)
 
 if(NOT CMAKE_BUILD_TYPE)
+  add_compile_options(-mcpu=native)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
@@ -84,7 +85,7 @@ endif()
 #add_compile_options(-fno-pic)
 add_link_options(-no-pie)
 
-option(BUILD_LIBUI "Build libui frontend" ON)
+option(BUILD_LIBUI "Build libui frontend" OFF)
 option(BUILD_SWITCH "Build switch fronted" OFF)
 option(BUILD_SDL "Build SDL frontend" ON)
 
