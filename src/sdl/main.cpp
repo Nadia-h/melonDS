@@ -8,6 +8,7 @@
 
 #include "../NDS.h"
 #include "../GPU.h"
+#include "../SPI.h"
 #include "../Config.h"
 #include "../SPU.h"
 
@@ -34,9 +35,10 @@ void audio_callback(void* data, Uint8* stream, int len) {
 }
 
 int main(int argc, char** argv) {
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s <rom>\n", argv[0]);
-		return 1;
+	bool has_rom = false;
+
+	if (argc > 1) {
+		has_rom = true;
 	}
 	
 	if (!setup_config_path(NULL)) {
@@ -50,11 +52,6 @@ int main(int argc, char** argv) {
 	}
 
 	auto window = new EmuWindow();
-
-	int arglen = strlen(argv[1]);
-	char* sav_name = (char*) malloc(arglen);
-	strcpy(sav_name, argv[1]);
-	strcpy(sav_name + (arglen - 4), ".sav");
 
 
 	SDL_AudioSpec req;
@@ -71,17 +68,27 @@ int main(int argc, char** argv) {
 	SDL_initFramerate(&fps);
 	SDL_setFramerate(&fps, 60);
 
-	NDS::Init();
-
 #ifdef JIT_ENABLED
 	Config::JIT_Enable = true;
-	Config::JIT_MaxBlockSize = 16;
+	Config::JIT_MaxBlockSize = 32;
 	Config::JIT_BrancheOptimisations = true;
 	Config::JIT_LiteralOptimisations = true;
 #endif
 
+	Config::Threaded3D = true;
+
+	NDS::Init();
 	GPU3D::InitRenderer(false);
-	NDS::LoadROM(argv[1], sav_name, false);
+
+	if (has_rom) {
+		int arglen = strlen(argv[1]);
+		char* sav_name = (char*) malloc(arglen);
+		strcpy(sav_name, argv[1]);
+		strcpy(sav_name + (arglen - 4), ".sav");
+		NDS::LoadROM(argv[1], sav_name, false);
+	} else {
+		NDS::LoadBIOS();
+	}
 
 	SPU::InitOutput();
 	SDL_PauseAudio(0);
@@ -146,6 +153,25 @@ int main(int argc, char** argv) {
 						NDS::ReleaseKey(16+6);
 					}
 					break;
+				case SDL_CONTROLLERDEVICEADDED: {
+					u32 id = e.cdevice.which;
+					SDL_GameController* ct = SDL_GameControllerOpen(id);
+					printf("Controller connected: %s\n", SDL_GameControllerName(ct));
+					break;
+				}
+				case SDL_CONTROLLERBUTTONUP:
+				case SDL_CONTROLLERBUTTONDOWN: {
+					bool pressed = e.cbutton.state == SDL_PRESSED;
+					for (int i = 0; keymap[i][0] != 0; i++) {
+						if (keymap[i][1] == e.cbutton.button) {
+							if (!pressed) keys |= (1 << i);
+							else keys &= ~(1 << i);
+							break;
+						}
+					}
+
+					break;
+				}
 			}
 		}
 
