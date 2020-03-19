@@ -96,6 +96,8 @@ int main(int argc, char** argv) {
 	SDL_Event e;
 	u32 keys = 0xFFFF;
 	bool touching;
+	bool should_delay = true;
+
 	while (running) {
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
@@ -123,7 +125,11 @@ int main(int argc, char** argv) {
 								} else {
 									window->set_integer_size(scale + rem == scale ? scale - 1 : scale);
 								}
+								break;
 							}
+							case SDLK_SPACE:
+								should_delay = !should_delay;
+								break;
 						}
 					}
 
@@ -201,7 +207,8 @@ int main(int argc, char** argv) {
 		NDS::RunFrame();
 		auto front = GPU::FrontBuffer;
 		window->update(GPU::Framebuffer[front][0], GPU::Framebuffer[front][1]);
-		SDL_framerateDelay(&fps);
+		if (should_delay)
+			SDL_framerateDelay(&fps);
 	}
 
 	
