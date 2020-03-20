@@ -19,11 +19,15 @@
 #ifndef PLATFORMCONFIG_H
 #define PLATFORMCONFIG_H
 
+#include <SDL2/SDL.h>
+
+#include "../types.h"
 #include "../Config.h"
 
 namespace Config {
 	extern u32 default_scale;
 	extern bool fullscreen;
+	extern SDL_KeyCode keymap[];
 }
 
 #endif // PLATFORMCONFIG_H

@@ -15,20 +15,13 @@
 
 bool running = true;
 
-s32 keymap[][2] = {
-	{ SDLK_x,		SDL_CONTROLLER_BUTTON_B },			 // A button
-	{ SDLK_z,		SDL_CONTROLLER_BUTTON_A },			 // B button
-	{ SDLK_RSHIFT,	SDL_CONTROLLER_BUTTON_BACK },		 // Select button
-	{ SDLK_RETURN,	SDL_CONTROLLER_BUTTON_START},		 // Start button
-	{ SDLK_RIGHT,	SDL_CONTROLLER_BUTTON_DPAD_RIGHT},	 // D-Pad right
-	{ SDLK_LEFT,	SDL_CONTROLLER_BUTTON_DPAD_LEFT},	 // D-pad left
-	{ SDLK_UP,		SDL_CONTROLLER_BUTTON_DPAD_UP},		 // D-pad up
-	{ SDLK_DOWN,	SDL_CONTROLLER_BUTTON_DPAD_DOWN},	 // D-pad down
-	{ SDLK_c,		SDL_CONTROLLER_BUTTON_RIGHTSHOULDER},// R button
-	{ SDLK_d,		SDL_CONTROLLER_BUTTON_LEFTSHOULDER}, // L button
-	{ SDLK_s,		SDL_CONTROLLER_BUTTON_Y},			 // X button
-	{ SDLK_a,		SDL_CONTROLLER_BUTTON_X},			 // Y button
-	{ 0, 0 }
+SDL_GameControllerButton controller_map[] = {
+	SDL_CONTROLLER_BUTTON_B, SDL_CONTROLLER_BUTTON_A,
+	SDL_CONTROLLER_BUTTON_BACK, SDL_CONTROLLER_BUTTON_START,
+	SDL_CONTROLLER_BUTTON_DPAD_RIGHT, SDL_CONTROLLER_BUTTON_DPAD_LEFT,
+	SDL_CONTROLLER_BUTTON_DPAD_UP, SDL_CONTROLLER_BUTTON_DPAD_DOWN,
+	SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
+	SDL_CONTROLLER_BUTTON_Y, SDL_CONTROLLER_BUTTON_X
 };
 
 void audio_callback(void* data, Uint8* stream, int len) {
@@ -142,8 +135,8 @@ int main(int argc, char** argv) {
 						}
 					}
 
-					for (int i = 0; keymap[i][0] != 0; i++) {
-						if (keymap[i][0] == e.key.keysym.sym) {
+					for (int i = 0; Config::keymap[i] != 0; i++) {
+						if (Config::keymap[i] == e.key.keysym.sym) {
 							if (!pressed) keys |= (1 << i);
 							else keys &= ~(1 << i);
 							break;
@@ -199,8 +192,8 @@ int main(int argc, char** argv) {
 				case SDL_CONTROLLERBUTTONUP:
 				case SDL_CONTROLLERBUTTONDOWN: {
 					bool pressed = e.cbutton.state == SDL_PRESSED;
-					for (int i = 0; keymap[i][0] != 0; i++) {
-						if (keymap[i][1] == e.cbutton.button) {
+					for (int i = 0; controller_map[i] != 0; i++) {
+						if (controller_map[i] == e.cbutton.button) {
 							if (!pressed) keys |= (1 << i);
 							else keys &= ~(1 << i);
 							break;
