@@ -10,7 +10,7 @@ EmuWindow::EmuWindow() :
 {
 	window = SDL_CreateWindow(
 		"melonDS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		256, 384, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL
+		256, 384, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN
 	);
 
 	SDL_SetWindowMinimumSize(window, 256, 384);
@@ -31,6 +31,10 @@ EmuWindow::~EmuWindow() {
 	SDL_DestroyTexture(emu_texture);
 	SDL_DestroyRenderer(rend);
 	SDL_DestroyWindow(window);
+}
+
+auto EmuWindow::show() -> void {
+	SDL_ShowWindow(window);
 }
 
 void EmuWindow::render() {
