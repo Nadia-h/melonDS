@@ -21,8 +21,9 @@
 
 #include "../Config.h"
 
-namespace Config
-{
+namespace Config {
+	extern u32 default_scale;
+	extern bool fullscreen;
 }
 
 #endif // PLATFORMCONFIG_H

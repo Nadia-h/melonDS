@@ -16,7 +16,8 @@ private:
 public:
 	EmuWindow();
 	~EmuWindow();
-	void update(u32* top, u32* bottom);
+	auto show() -> void;
+	auto update(u32* top, u32* bottom) -> void;
 	auto get_window_id() -> u32;
 	auto get_fullscreen() -> bool;
 	auto set_fullscreen(bool) -> void;

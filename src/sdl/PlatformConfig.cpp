@@ -23,8 +23,11 @@
 
 namespace Config
 {
-
+	u32 default_scale;
+	bool fullscreen;
 ConfigEntry PlatformConfigFile[] = {
+	{"sdl_default_scale", 0, &default_scale, 1, NULL, 0 },
+	{"sdl_fullscreen", 0, &fullscreen, 0, NULL, 0 },
     {"", -1, NULL, 0, NULL, 0}
 };
 

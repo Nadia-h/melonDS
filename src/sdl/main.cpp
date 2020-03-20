@@ -11,6 +11,7 @@
 #include "../SPI.h"
 #include "../Config.h"
 #include "../SPU.h"
+#include "PlatformConfig.h"
 
 bool running = true;
 
@@ -51,8 +52,6 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	auto window = new EmuWindow();
-
 
 	SDL_AudioSpec req;
 	req.channels = 2;
@@ -68,14 +67,22 @@ int main(int argc, char** argv) {
 	SDL_initFramerate(&fps);
 	SDL_setFramerate(&fps, 60);
 
+	Config::Load();
+
 #ifdef JIT_ENABLED
 	Config::JIT_Enable = true;
 	Config::JIT_MaxBlockSize = 32;
 	Config::JIT_BrancheOptimisations = true;
 	Config::JIT_LiteralOptimisations = true;
 #endif
-
 	Config::Threaded3D = true;
+
+	auto window = new EmuWindow();
+	window->set_integer_size(Config::default_scale);
+
+	if (Config::fullscreen) {
+		window->set_fullscreen(true);
+	}
 
 	NDS::Init();
 	GPU3D::InitRenderer(false);
@@ -97,6 +104,8 @@ int main(int argc, char** argv) {
 	u32 keys = 0xFFFF;
 	bool touching;
 	bool should_delay = true;
+
+	window->show();
 
 	while (running) {
 		while (SDL_PollEvent(&e)) {
@@ -211,6 +220,7 @@ int main(int argc, char** argv) {
 			SDL_framerateDelay(&fps);
 	}
 
-	
+	Config::Save();
+
 	return 0;
 }
