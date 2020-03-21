@@ -44,8 +44,6 @@ int emu_thread(void* data) {
 		SDL_framerateDelay(&fps);
 	}
 
-	printf("Emu thraed done\n");
-
 	return 0;
 }
 
@@ -67,14 +65,6 @@ int main(int argc, char** argv) {
 	}
 
 	Config::Load();
-
-#ifdef JIT_ENABLED
-	Config::JIT_Enable = true;
-	Config::JIT_MaxBlockSize = 32;
-	Config::JIT_BrancheOptimisations = true;
-	Config::JIT_LiteralOptimisations = true;
-#endif
-	Config::Threaded3D = true;
 
 	emulator = new Emulator();
 
