@@ -14,7 +14,7 @@ add_executable(melonDS-sdl
 
 find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(SDL2 REQUIRED sdl2 SDL2_gfx SDL2_ttf)
+pkg_check_modules(SDL2 REQUIRED sdl2 SDL2_gfx)
 
 target_include_directories(melonDS-sdl PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(melonDS-sdl core ${SDL2_LIBRARIES})
