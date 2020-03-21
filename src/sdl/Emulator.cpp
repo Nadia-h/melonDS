@@ -26,7 +26,6 @@ Emulator::Emulator() :
 	NDS::Init();
 	GPU3D::InitRenderer(false);
 	SPU::InitOutput();
-	window->set_integer_size(Config::default_scale);
 	window->set_fullscreen(Config::fullscreen);
 }
 
