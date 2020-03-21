@@ -77,7 +77,6 @@ FILE* OpenLocalFile(const char* path, const char* mode) {
 		fullpath += path;
     }
 
-	printf("Opening %s\n", fullpath.c_str());
     return OpenFile(fullpath.c_str(), mode, mode[0] != 'w');
 }
 
