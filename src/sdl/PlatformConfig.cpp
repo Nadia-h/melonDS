@@ -27,7 +27,7 @@ namespace Config {
 	u32 default_scale;
 	bool fullscreen;
 
-	SDL_KeyCode keymap[] = {
+	SDL_Keycode keymap[] = {
 		SDLK_x, SDLK_z, SDLK_RSHIFT, SDLK_RETURN, SDLK_RIGHT, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_c, SDLK_d, SDLK_s, SDLK_a, (SDL_KeyCode) NULL
 	};
 

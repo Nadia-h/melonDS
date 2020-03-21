@@ -27,7 +27,7 @@
 namespace Config {
 	extern u32 default_scale;
 	extern bool fullscreen;
-	extern SDL_KeyCode keymap[];
+	extern SDL_Keycode keymap[];
 }
 
 #endif // PLATFORMCONFIG_H
