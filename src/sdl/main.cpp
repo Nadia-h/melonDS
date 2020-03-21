@@ -14,6 +14,7 @@
 #include "InputDialog.h"
 
 Emulator* emulator;
+InputDialog* input_dialog;
 
 void audio_callback(void* data, Uint8* stream, int len) {
 	emulator->read_audio((s16*)stream, len>>2);
@@ -46,16 +47,6 @@ int emu_thread(void* data) {
 	printf("Emu thraed done\n");
 
 	return 0;
-}
-
-int input_config(void* a) {
-	InputDialog d;
-	d.run();
-	return 0;
-}
-
-void do_input_config() {
-	SDL_CreateThread(input_config, "Input config thread", NULL);
 }
 
 int main(int argc, char** argv) {
@@ -103,11 +94,27 @@ int main(int argc, char** argv) {
 	SDL_Thread* emu = SDL_CreateThread(emu_thread, "melonDS emulator thread", NULL);
 
 	while (emulator->is_running()) {
+		if (input_dialog != nullptr) {
+			input_dialog->run();
+		}
+
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
 				case SDL_QUIT:
 					emulator->stop();
 					break;
+				case SDL_KEYDOWN:
+					if (input_dialog != NULL) {
+						input_dialog->key(e.key.keysym.sym);
+						if (input_dialog->is_done()) {
+							delete input_dialog;
+							input_dialog = nullptr;
+						}
+						break;
+					} else if (e.key.keysym.sym == SDLK_F12) {
+						input_dialog = new InputDialog();
+						break;
+					}
 				default:
 					emulator->queue_event(e);
 					break;

@@ -1,9 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
+#include <mutex>
+#include <condition_variable>
 
 #include "font8x8_basic.h"
-
 #include "InputDialog.h"
 #include "PlatformConfig.h"
 
@@ -18,7 +19,7 @@ const key_naming key_order[] {
 };
 
 InputDialog::InputDialog() :
-	window(), rend()
+	window(), rend(), curr_key(-1), text_texture(), key_mutex(), done()
 {
 	window = SDL_CreateWindow(
 			"melonDS input configuration",
@@ -26,70 +27,54 @@ InputDialog::InputDialog() :
 			SDL_WINDOW_HIDDEN
 	);
 	
-	rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+	rend = SDL_CreateRenderer(window, -1, 0);
 	SDL_RenderSetLogicalSize(rend, 250, 50);
+	key(0);
+	SDL_ShowWindow(window);
 }
 
 InputDialog::~InputDialog() {
+	SDL_DestroyTexture(text_texture);
 	SDL_DestroyRenderer(rend);
 	SDL_DestroyWindow(window);
 }
 
-auto InputDialog::run() -> void {
+auto InputDialog::key(SDL_Keycode code) -> void {
 
-	SDL_ShowWindow(window);
+	if (curr_key > -1)
+		Config::keymap[key_order[curr_key].num] = code;
 
-	SDL_Event e;
-	bool done = false;
-	u32 curr_key = 0;
-	auto t = create_text("Press a key for A");
-
-	while (!done) {
-		while (SDL_PollEvent(&e)) {
-			switch (e.type) {
-				case SDL_WINDOWEVENT:
-					if (e.window.event == SDL_WINDOWEVENT_CLOSE) {
-						if (e.window.windowID == SDL_GetWindowID(window)) {
-							SDL_HideWindow(window);
-							done = true;
-						}
-					}
-					break;
-				case SDL_KEYDOWN: {
-					Config::keymap[key_order[curr_key].num] = e.key.keysym.sym;
-
-					curr_key++;
-					if (curr_key == SDL_arraysize(key_order)) {
-						done = true;
-						break;
-					}
-					SDL_DestroyTexture(t);
-					std::string newtext = "Press a key for ";
-					newtext += key_order[curr_key].name;
-					t = create_text(newtext.c_str());
-					break;
-				}
-				case SDL_QUIT:
-					exit(0);
-					break;
-			}
-		}
-
-		SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
-		SDL_RenderClear(rend);
-
-		int w, h;
-		SDL_QueryTexture(t, NULL, NULL, &w, &h);
-		SDL_Rect r, r2;
-		r.w = w; r.h = h; r.x = 0; r.y = 0;
-		r2.w = w; r2.h = h; r2.x = (125 - (w / 2)); r2.y = (25 - (h / 2));
-
-		SDL_RenderCopy(rend, t, &r, &r2);
-		SDL_RenderPresent(rend);
+	curr_key++;
+	if (curr_key == SDL_arraysize(key_order)) {
+		done = true;
+		return;
 	}
 
-	SDL_HideWindow(window);
-	SDL_DestroyTexture(t);
+	{
+		std::unique_lock<std::mutex> lock(key_mutex);
+		if (text_texture != nullptr)
+			SDL_DestroyTexture(text_texture);
+		std::string newtext = "Press a key for ";
+		newtext += key_order[curr_key].name;
+
+		text_texture = create_text(newtext.c_str());
+	}
+}
+
+auto InputDialog::run() -> void {
+	std::lock_guard<std::mutex> lock(key_mutex);
+
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
+	SDL_RenderClear(rend);
+
+	int w, h;
+	SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
+	SDL_Rect r, r2;
+	r.w = w; r.h = h; r.x = 0; r.y = 0;
+	r2.w = w; r2.h = h; r2.x = (125 - (w / 2)); r2.y = (25 - (h / 2));
+
+	SDL_RenderCopy(rend, text_texture, &r, &r2);
+	SDL_RenderPresent(rend);
 }
 
 // This should probably go somewhere else eventually
@@ -116,12 +101,14 @@ auto InputDialog::create_text(const char* text) -> SDL_Texture* {
 			for (int k = 7; k > -1; k--) {
 				auto f = (cr >> k & 1) * (255 - ((127 / FONT_HEIGHT) * j));
 				t[row + offset + k] = (f << 24) | (f << 16) | (f << 8) | f;
-				printf("%d ", f);
 			}
-			printf("\n");
 		}
 	}
 
 	SDL_UnlockTexture(tex);
 	return tex;
+}
+
+auto InputDialog::is_done() -> bool {
+	return done;
 }
