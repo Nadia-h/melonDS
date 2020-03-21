@@ -27,6 +27,10 @@
 
 extern char* conf_path;
 
+#include "Emulator.h"
+
+bool is_stopped;
+
 namespace Platform
 {
 
@@ -43,9 +47,8 @@ int ThreadEntry(void* data) {
     return 0;
 }
 
-
 void StopEmu() {
-//	Stop(true);
+	is_stopped = true;
 }
 
 FILE* OpenFile(const char* path, const char* mode, bool mustexist) {
