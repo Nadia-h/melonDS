@@ -90,3 +90,8 @@ auto EmuWindow::get_content_size(int& w, int& h) -> void {
 auto EmuWindow::set_integer_size(u32 factor) -> void {
 	SDL_SetWindowSize(window, 256 * factor, 384 * factor);
 }
+
+auto EmuWindow::has_focus() -> bool {
+	auto flags = SDL_GetWindowFlags(window);
+	return flags & SDL_WINDOW_INPUT_FOCUS;
+}
