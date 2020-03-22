@@ -69,6 +69,11 @@ auto Emulator::handle_events() -> void {
 
 				if (pressed) {
 					switch (e.key.keysym.sym) {
+						case SDLK_q:
+							if (e.key.keysym.mod & KMOD_CTRL) {
+								stop();
+							}
+							break;
 						case SDLK_PAUSE:
 							set_pause(!is_paused());
 							break;
