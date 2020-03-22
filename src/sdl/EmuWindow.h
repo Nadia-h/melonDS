@@ -18,6 +18,7 @@ public:
 	~EmuWindow();
 	auto show() -> void;
 	auto update(u32* top, u32* bottom) -> void;
+	auto present() -> void;
 	auto get_window_id() -> u32;
 	auto get_fullscreen() -> bool;
 	auto set_fullscreen(bool) -> void;

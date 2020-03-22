@@ -20,33 +20,6 @@ void audio_callback(void* data, Uint8* stream, int len) {
 	emulator->read_audio((s16*)stream, len>>2);
 }
 
-int emu_thread(void* data) {
-	FPSmanager fps;
-	SDL_initFramerate(&fps);
-	SDL_setFramerate(&fps, 60);
-
-	SDL_AudioSpec req;
-	req.channels = 2;
-	req.format = AUDIO_S16SYS;
-	req.freq = 32768;
-	req.samples = 1024;
-	req.callback = &audio_callback;
-
-	SDL_AudioSpec out;
-	SDL_OpenAudio(&req, &out);
-
-	emulator->get_window()->show();
-
-	SDL_PauseAudio(0);
-
-	while (emulator->is_running()) {
-		emulator->run_frame();
-		SDL_framerateDelay(&fps);
-	}
-
-	return 0;
-}
-
 int main(int argc, char** argv) {
 	bool has_rom = false;
 
@@ -81,7 +54,24 @@ int main(int argc, char** argv) {
 	SDL_Event e;
 	bool paused = false;
 
-	SDL_Thread* emu = SDL_CreateThread(emu_thread, "melonDS emulator thread", NULL);
+	//SDL_Thread* emu = SDL_CreateThread(emu_thread, "melonDS emulator thread", NULL);
+	FPSmanager fps;
+	SDL_initFramerate(&fps);
+	SDL_setFramerate(&fps, 60);
+
+	SDL_AudioSpec req;
+	req.channels = 2;
+	req.format = AUDIO_S16SYS;
+	req.freq = 32768;
+	req.samples = 1024;
+	req.callback = &audio_callback;
+
+	SDL_AudioSpec out;
+	SDL_OpenAudio(&req, &out);
+
+	emulator->get_window()->show();
+
+	SDL_PauseAudio(0);
 
 	while (emulator->is_running()) {
 		if (input_dialog != nullptr) {
@@ -99,27 +89,29 @@ int main(int argc, char** argv) {
 						if (input_dialog->is_done()) {
 							delete input_dialog;
 							input_dialog = nullptr;
+							emulator->set_pause(false);
 						}
 						break;
 					} else if (e.key.keysym.sym == SDLK_F12) {
+						emulator->set_pause(true);
 						input_dialog = new InputDialog();
 						break;
 					}
-				default:
+				default: {
 					emulator->queue_event(e);
 					break;
+				}
 			}
 		}
+
+		emulator->run_frame();
+		SDL_framerateDelay(&fps);
 	}
 
-
-
-	int status;
-	SDL_WaitThread(emu, &status);
 	delete emulator;
 
 	Config::Save();
 	SDL_Quit();
 
-	return status;
+	return 0;
 }
