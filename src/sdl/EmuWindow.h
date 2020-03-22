@@ -7,7 +7,6 @@
 class EmuWindow {
 private:
 	SDL_Window* window;
-	SDL_Window* gl_window;
 	SDL_Renderer* rend;
 	SDL_Texture* emu_texture;
 	bool fullscreen;
