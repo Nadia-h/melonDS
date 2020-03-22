@@ -24,10 +24,10 @@
 #include "PlatformConfig.h"
 
 namespace Config {
-	bool use_framelimit;
-	bool use_vsync;
-	bool fullscreen;
-	u32 default_scale;
+	int default_scale;
+	int fullscreen;
+	int use_framelimit;
+	int use_vsync;
 
 	SDL_Keycode keymap[] = {
 		SDLK_x, SDLK_z, SDLK_RSHIFT, SDLK_RETURN, SDLK_RIGHT, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_c, SDLK_d, SDLK_s, SDLK_a, (SDL_KeyCode) NULL
