@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 				case SDL_QUIT:
 					emulator->stop();
 					break;
-				case SDL_KEYDOWN:
+				case SDL_KEYUP:
 					if (input_dialog != NULL) {
 						input_dialog->key(e.key.keysym.sym);
 						if (input_dialog->is_done()) {
@@ -96,7 +96,8 @@ int main(int argc, char** argv) {
 						input_dialog = new InputDialog();
 						break;
 					}
-					continue;
+					emulator->queue_event(e);
+					break;
 				default: {
 					emulator->queue_event(e);
 					break;
