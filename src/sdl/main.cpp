@@ -105,7 +105,8 @@ int main(int argc, char** argv) {
 		}
 
 		emulator->run_frame();
-		SDL_framerateDelay(&fps);
+		if (Config::use_framelimit)
+			SDL_framerateDelay(&fps);
 	}
 
 	delete emulator;

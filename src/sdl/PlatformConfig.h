@@ -28,6 +28,8 @@ namespace Config {
 	extern u32 default_scale;
 	extern bool fullscreen;
 	extern SDL_Keycode keymap[];
+	extern bool use_framelimit;
+	extern bool use_vsync;
 }
 
 #endif // PLATFORMCONFIG_H
