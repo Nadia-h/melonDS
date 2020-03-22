@@ -18,7 +18,7 @@ const key_naming key_order[] {
 };
 
 InputDialog::InputDialog() :
-	window(), rend(), curr_key(-1), text_texture(), done()
+	window(), rend(), text_texture(), curr_key(-1), done()
 {
 	window = SDL_CreateWindow(
 			"melonDS input configuration",
@@ -82,9 +82,9 @@ auto InputDialog::create_text(const char* text) -> SDL_Texture* {
 	int stride;
 	SDL_LockTexture(tex, NULL, (void**) &t, &stride);
 
-	for (int i = 0; i < len; i++) {
+	for (size_t i = 0; i < len; i++) {
 		auto offset = i * FONT_WIDTH;
-		char ch = text[i];
+		u8 ch = text[i];
 		if (ch > 127) ch = 0;
 		
 		for (int j = 0; j < FONT_HEIGHT; j++) {

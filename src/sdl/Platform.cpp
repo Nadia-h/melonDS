@@ -131,6 +131,7 @@ void Semaphore_Post(void* sema) {
 }
 
 void* GL_GetProcAddress(const char* proc) {
+	(void) proc;
 	return NULL;
 }
 
@@ -143,10 +144,14 @@ bool MP_Init() {
 void MP_DeInit() {}
 
 int MP_SendPacket(u8* data, int len) {
+	(void) data;
+	(void) len;
 	return 0;
 }
 
 int MP_RecvPacket(u8* data, bool block) {
+	(void) data;
+	(void) block;
 	return 0;
 }
 
@@ -157,10 +162,13 @@ bool LAN_Init() {
 void LAN_DeInit() {}
 
 int LAN_SendPacket(u8* data, int len) {
+	(void) data;
+	(void) len;
 	return 0;
 }
 
 int LAN_RecvPacket(u8* data) {
+	(void) data;
 	return 0;
 }
 

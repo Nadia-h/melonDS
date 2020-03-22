@@ -19,7 +19,7 @@ SDL_GameControllerButton controller_map[] = {
 };
 
 Emulator::Emulator() :
-	event_queue(), window(new EmuWindow()), keys(0xFFFF), touching(), paused()
+	window(new EmuWindow()), event_queue(), keys(0xFFFF), touching(), paused()
 {
 	NDS::Init();
 	GPU3D::InitRenderer(false);
