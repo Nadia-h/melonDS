@@ -17,7 +17,7 @@ EmuWindow::EmuWindow() :
 
 	SDL_SetWindowMinimumSize(window, 256, 384);
 
-	rend = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
+	rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	emu_texture = SDL_CreateTexture(
 		rend, SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_STREAMING,
