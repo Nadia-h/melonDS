@@ -25,11 +25,11 @@
 #include "../Config.h"
 
 namespace Config {
-	extern u32 default_scale;
-	extern bool fullscreen;
+	extern int default_scale;
+	extern int fullscreen;
+	extern int use_framelimit;
+	extern int use_vsync;
 	extern SDL_Keycode keymap[];
-	extern bool use_framelimit;
-	extern bool use_vsync;
 }
 
 #endif // PLATFORMCONFIG_H
