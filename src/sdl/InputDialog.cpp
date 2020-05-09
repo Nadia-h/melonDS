@@ -1,8 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
-#include <mutex>
-#include <condition_variable>
 
 #include "font8x8_basic.h"
 #include "InputDialog.h"
@@ -27,7 +25,7 @@ InputDialog::InputDialog() :
 			SDL_WINDOW_HIDDEN
 	);
 	
-	rend = SDL_CreateRenderer(window, -1, 0);
+	rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	SDL_RenderSetLogicalSize(rend, 250, 50);
 	key(0);
 	SDL_ShowWindow(window);
@@ -50,19 +48,15 @@ auto InputDialog::key(SDL_Keycode code) -> void {
 		return;
 	}
 
-	{
-		std::unique_lock<std::mutex> lock(key_mutex);
-		if (text_texture != nullptr)
-			SDL_DestroyTexture(text_texture);
-		std::string newtext = "Press a key for ";
-		newtext += key_order[curr_key].name;
+	if (text_texture != nullptr)
+		SDL_DestroyTexture(text_texture);
+	std::string newtext = "Press a key for ";
+	newtext += key_order[curr_key].name;
 
-		text_texture = create_text(newtext.c_str());
-	}
+	text_texture = create_text(newtext.c_str());
 }
 
 auto InputDialog::run() -> void {
-	std::lock_guard<std::mutex> lock(key_mutex);
 
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
 	SDL_RenderClear(rend);

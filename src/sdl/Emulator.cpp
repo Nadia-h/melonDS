@@ -21,7 +21,7 @@ SDL_GameControllerButton controller_map[] = {
 };
 
 Emulator::Emulator() :
-	event_queue(), event_mutex(), window(new EmuWindow()), keys(0xFFFF), touching(), emu_mutex()
+	window(new EmuWindow()), event_queue(), event_mutex(), emu_mutex(), keys(0xFFFF), touching(false), paused(false)
 {
 	NDS::Init();
 	GPU3D::InitRenderer(false);
@@ -48,7 +48,7 @@ auto Emulator::run_frame() -> void {
 		return;
 
 	handle_events();
-	{
+	if (!paused) {
 		std::unique_lock<std::mutex> lock(emu_mutex);
 		NDS::RunFrame();
 	}
@@ -77,7 +77,7 @@ auto Emulator::handle_events() -> void {
 							}
 							break;
 						case SDLK_PAUSE:
-							set_pause(!is_paused());
+							set_paused(!is_paused());
 							break;
 						case SDLK_F11:
 							window->set_fullscreen(!window->get_fullscreen());
@@ -196,4 +196,12 @@ auto Emulator::stop() -> void {
 	std::lock_guard<std::mutex> lock(emu_mutex);
 	printf("stopping\n");
 	NDS::Stop();
+}
+
+auto Emulator::is_paused() -> bool {
+	return paused;
+}
+
+auto Emulator::set_paused(bool paused) -> void {
+	this->paused = paused;
 }

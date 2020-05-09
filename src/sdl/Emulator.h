@@ -17,6 +17,7 @@ class Emulator {
 	auto handle_events() -> void;
 	u32 keys;
 	bool touching;
+	bool paused;
 public:
 	Emulator();
 	~Emulator();
@@ -28,6 +29,8 @@ public:
 	auto read_audio(s16* data, int samples) -> int;
 	auto get_window() -> EmuWindow*;
 	auto stop() -> void;
+	auto is_paused() -> bool;
+	auto set_paused(bool pause) -> void;
 };
 
 #endif
