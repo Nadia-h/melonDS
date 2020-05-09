@@ -156,7 +156,8 @@ auto Emulator::handle_events() -> void {
 			case SDL_CONTROLLERBUTTONUP:
 			case SDL_CONTROLLERBUTTONDOWN: {
 				bool pressed = e.cbutton.state == SDL_PRESSED;
-				for (int i = 0; controller_map[i] != 0; i++) {
+				int size = sizeof(controller_map) / sizeof(SDL_GameControllerButton);
+				for (int i = 0; i < size; i++) {
 					if (controller_map[i] == e.cbutton.button) {
 						if (!pressed) keys |= (1 << i);
 						else keys &= ~(1 << i);
