@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <string>
 
 #include "font8x8_basic.h"
