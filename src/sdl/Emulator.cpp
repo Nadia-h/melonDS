@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <queue>
+#include <mutex>
+#include <condition_variable>
 
 #include "Emulator.h"
 #include "EmuWindow.h"
@@ -19,7 +21,7 @@ SDL_GameControllerButton controller_map[] = {
 };
 
 Emulator::Emulator() :
-	window(new EmuWindow()), event_queue(), keys(0xFFFF), touching(), paused()
+	event_queue(), event_mutex(), window(new EmuWindow()), keys(0xFFFF), touching(), emu_mutex()
 {
 	NDS::Init();
 	GPU3D::InitRenderer(false);
@@ -46,17 +48,17 @@ auto Emulator::run_frame() -> void {
 		return;
 
 	handle_events();
-
-	if (!paused) {
+	{
+		std::unique_lock<std::mutex> lock(emu_mutex);
 		NDS::RunFrame();
-		auto front = GPU::FrontBuffer;
-		window->update(GPU::Framebuffer[front][0], GPU::Framebuffer[front][1]);
 	}
 
-	window->present();
+	auto front = GPU::FrontBuffer;
+	window->update(GPU::Framebuffer[front][0], GPU::Framebuffer[front][1]);
 }
 
 auto Emulator::handle_events() -> void {
+	std::unique_lock<std::mutex> lock(event_mutex);
 	SDL_Event e;
 
 	while (event_queue.size() > 0) {
@@ -174,6 +176,7 @@ auto Emulator::handle_events() -> void {
 }
 
 auto Emulator::queue_event(SDL_Event event) -> void {
+	std::lock_guard<std::mutex> lock(event_mutex);
 	event_queue.push(event);
 }
 
@@ -190,14 +193,7 @@ auto Emulator::is_running() -> bool {
 }
 
 auto Emulator::stop() -> void {
+	std::lock_guard<std::mutex> lock(emu_mutex);
+	printf("stopping\n");
 	NDS::Stop();
-}
-
-auto Emulator::set_pause(bool pause) -> void {
-	SDL_PauseAudio(pause);
-	paused = pause;
-}
-
-auto Emulator::is_paused() -> bool {
-	return paused;
 }

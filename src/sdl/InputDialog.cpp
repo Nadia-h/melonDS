@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
+#include <mutex>
 #include <condition_variable>
 
 #include "font8x8_basic.h"
@@ -39,6 +40,7 @@ InputDialog::~InputDialog() {
 }
 
 auto InputDialog::key(SDL_Keycode code) -> void {
+
 	if (curr_key > -1)
 		Config::keymap[key_order[curr_key].num] = code;
 
@@ -48,15 +50,20 @@ auto InputDialog::key(SDL_Keycode code) -> void {
 		return;
 	}
 
-	if (text_texture != nullptr)
-		SDL_DestroyTexture(text_texture);
-	std::string newtext = "Press a key for ";
-	newtext += key_order[curr_key].name;
+	{
+		std::unique_lock<std::mutex> lock(key_mutex);
+		if (text_texture != nullptr)
+			SDL_DestroyTexture(text_texture);
+		std::string newtext = "Press a key for ";
+		newtext += key_order[curr_key].name;
 
-	text_texture = create_text(newtext.c_str());
+		text_texture = create_text(newtext.c_str());
+	}
 }
 
 auto InputDialog::run() -> void {
+	std::lock_guard<std::mutex> lock(key_mutex);
+
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
 	SDL_RenderClear(rend);
 

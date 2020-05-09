@@ -49,6 +49,7 @@ void EmuWindow::render() {
 
 	SDL_RenderClear(rend);
 	SDL_RenderCopy(rend, emu_texture, &rect, &rect);
+	SDL_RenderPresent(rend);
 }
 
 void EmuWindow::update(u32* top, u32* bottom) {
@@ -61,11 +62,8 @@ void EmuWindow::update(u32* top, u32* bottom) {
 	memcpy(texture, top, fbsize);
 	memcpy((u8*) texture + fbsize, bottom, fbsize);
 	SDL_UnlockTexture(emu_texture);
-}
 
-auto EmuWindow::present() -> void {
 	this->render();
-	SDL_RenderPresent(rend);
 }
 
 auto EmuWindow::get_window_id() -> u32 {

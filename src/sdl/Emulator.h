@@ -2,6 +2,7 @@
 #define __SDL_EMULATOR_H
 
 #include <queue>
+#include <mutex>
 
 #include "EmuWindow.h"
 
@@ -11,10 +12,11 @@ extern bool is_stopped;
 class Emulator {
 	EmuWindow* window;
 	std::queue<SDL_Event> event_queue;
+	std::mutex event_mutex;
+	std::mutex emu_mutex;
 	auto handle_events() -> void;
 	u32 keys;
 	bool touching;
-	bool paused;
 public:
 	Emulator();
 	~Emulator();
@@ -26,8 +28,6 @@ public:
 	auto read_audio(s16* data, int samples) -> int;
 	auto get_window() -> EmuWindow*;
 	auto stop() -> void;
-	auto set_pause(bool pause) -> void;
-	auto is_paused() -> bool;
 };
 
 #endif
