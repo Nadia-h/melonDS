@@ -44,7 +44,8 @@ int emu_thread(void* data)
 	while (emulator->is_running())
 	{
 		emulator->run_frame();
-		SDL_framerateDelay(&fps);
+		if (Config::use_framelimit)
+			SDL_framerateDelay(&fps);
 	}
 
 	return 0;
