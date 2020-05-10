@@ -10,20 +10,30 @@ struct key_naming {
 	const u32 num;
 };
 
-const key_naming key_order[] {
-	{"A", 0}, {"B", 1}, {"X", 10}, {"Y", 11}, {"L", 9}, {"R", 8}, {"SELECT", 2},
-	{"START", 3}, {"Up", 6}, {"Down", 7}, {"Left", 5}, {"Right", 4}
+const key_naming key_order[]{
+	{"A", 0},
+	{"B", 1},
+	{"X", 10},
+	{"Y", 11},
+	{"L", 9},
+	{"R", 8},
+	{"SELECT", 2},
+	{"START", 3},
+	{"Up", 6},
+	{"Down", 7},
+	{"Left", 5},
+	{"Right", 4}
 };
 
 InputDialog::InputDialog() :
-	window(), rend(), text_texture(), curr_key(-1), done()
-{
+	window(), rend(), text_texture(), curr_key(-1), done() {
+
 	window = SDL_CreateWindow(
-			"melonDS input configuration",
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 500, 100,
-			SDL_WINDOW_HIDDEN
+		"melonDS input configuration",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 500, 100,
+		SDL_WINDOW_HIDDEN
 	);
-	
+
 	rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	SDL_RenderSetLogicalSize(rend, 250, 50);
 	key(0);
@@ -63,8 +73,14 @@ auto InputDialog::run() -> void {
 	int w, h;
 	SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
 	SDL_Rect r, r2;
-	r.w = w; r.h = h; r.x = 0; r.y = 0;
-	r2.w = w; r2.h = h; r2.x = (125 - (w / 2)); r2.y = (25 - (h / 2));
+	r.w = w;
+	r.h = h;
+	r.x = 0;
+	r.y = 0;
+	r2.w = w;
+	r2.h = h;
+	r2.x = (125 - (w / 2));
+	r2.y = (25 - (h / 2));
 
 	SDL_RenderCopy(rend, text_texture, &r, &r2);
 	SDL_RenderPresent(rend);
@@ -86,7 +102,7 @@ auto InputDialog::create_text(const char* text) -> SDL_Texture* {
 		auto offset = i * FONT_WIDTH;
 		u8 ch = text[i];
 		if (ch > 127) ch = 0;
-		
+
 		for (int j = 0; j < FONT_HEIGHT; j++) {
 			auto row = row_width * j;
 

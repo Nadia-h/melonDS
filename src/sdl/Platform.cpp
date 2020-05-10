@@ -31,20 +31,20 @@ extern char* conf_path;
 
 bool is_stopped;
 
-namespace Platform
-{
+namespace Platform {
 
 
 typedef struct {
-    SDL_Thread* ID;
-    void (*Func)();
+	SDL_Thread* ID;
+
+	void (* Func)();
 
 } ThreadData;
 
 int ThreadEntry(void* data) {
-    ThreadData* thread = (ThreadData*)data;
-    thread->Func();
-    return 0;
+	ThreadData* thread = (ThreadData*) data;
+	thread->Func();
+	return 0;
 }
 
 void StopEmu() {
@@ -52,32 +52,29 @@ void StopEmu() {
 }
 
 FILE* OpenFile(const char* path, const char* mode, bool mustexist) {
-    FILE* ret;
+	FILE* ret;
 
-    if (mustexist) {
+	if (mustexist) {
 		ret = fopen(path, "rb");
 		if (ret) ret = freopen(path, mode, ret);
-    } else
+	} else
 		ret = fopen(path, mode);
 
-    return ret;
+	return ret;
 }
 
 FILE* OpenLocalFile(const char* path, const char* mode) {
-    std::string fullpath;
-    if (path[0] == '/')
-    {
-        // If it's an absolute path, just open that.
-        fullpath = std::string(path);
-    }
-    else
-    {
-        // Check user configuration directory
+	std::string fullpath;
+	if (path[0] == '/') {
+		// If it's an absolute path, just open that.
+		fullpath = std::string(path);
+	} else {
+		// Check user configuration directory
 		fullpath += conf_path;
 		fullpath += path;
-    }
+	}
 
-    return OpenFile(fullpath.c_str(), mode, mode[0] != 'w');
+	return OpenFile(fullpath.c_str(), mode, mode[0] != 'w');
 }
 
 // TODO this properly
@@ -87,16 +84,16 @@ FILE* OpenDataFile(const char* path) {
 
 
 extern "C" {
-	typedef void (*MelonThreadFunc)();
-	int sdl_thread_function(void* data) {
-		((MelonThreadFunc) data)();
-		return 0;
-	}
+typedef void (* MelonThreadFunc)();
+int sdl_thread_function(void* data) {
+	((MelonThreadFunc) data)();
+	return 0;
+}
 }
 
 void* Thread_Create(MelonThreadFunc func) {
 	auto t = SDL_CreateThread(sdl_thread_function, "melonDS core thread", (void*) func);
-    return t;
+	return t;
 }
 
 void Thread_Free(void* thread) {
@@ -115,19 +112,19 @@ void* Semaphore_Create() {
 }
 
 void Semaphore_Free(void* sema) {
-	SDL_DestroySemaphore((SDL_sem*)sema);
+	SDL_DestroySemaphore((SDL_sem*) sema);
 }
 
 void Semaphore_Reset(void* sema) {
-	while (SDL_SemTryWait((SDL_sem*)sema) == 0);
+	while (SDL_SemTryWait((SDL_sem*) sema) == 0);
 }
 
 void Semaphore_Wait(void* sema) {
-	SDL_SemWait((SDL_sem*)sema);
+	SDL_SemWait((SDL_sem*) sema);
 }
 
 void Semaphore_Post(void* sema) {
-	SDL_SemPost((SDL_sem*)sema);
+	SDL_SemPost((SDL_sem*) sema);
 }
 
 void* GL_GetProcAddress(const char* proc) {

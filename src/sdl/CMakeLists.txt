@@ -4,14 +4,14 @@ set(CMAKE_CXX_STANDARD 14)
 add_compile_options(-Wall -Wextra -Werror -pedantic)
 
 add_executable(melonDS-sdl
-	main.cpp
-	ConfPath.cpp
-	EmuWindow.cpp
-	Platform.cpp
-	PlatformConfig.cpp
-	InputDialog.cpp
-	Emulator.cpp
-)
+        main.cpp
+        ConfPath.cpp
+        EmuWindow.cpp
+        Platform.cpp
+        PlatformConfig.cpp
+        InputDialog.cpp
+        Emulator.cpp
+        )
 
 find_package(PkgConfig REQUIRED)
 

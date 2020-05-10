@@ -21,8 +21,9 @@ SDL_GameControllerButton controller_map[] = {
 };
 
 Emulator::Emulator() :
-	window(new EmuWindow()), event_queue(), event_mutex(), emu_mutex(), keys(0xFFFF), touching(false), paused(false)
-{
+	window(new EmuWindow()), event_queue(), event_mutex(), emu_mutex(), keys(0xFFFF), touching(false),
+	paused(false) {
+
 	NDS::Init();
 	GPU3D::InitRenderer(false);
 	SPU::InitOutput();
@@ -88,7 +89,7 @@ auto Emulator::handle_events() -> void {
 							window->get_content_size(x, y);
 							int scale = x / 256;
 							int rem = x % 256;
-							
+
 							if (e.key.keysym.sym == SDLK_PLUS) {
 								window->set_integer_size(scale + 1);
 							} else {
@@ -122,12 +123,12 @@ auto Emulator::handle_events() -> void {
 							continue;
 
 						NDS::TouchScreen(x, y - 192);
-						NDS::PressKey(16+6);
+						NDS::PressKey(16 + 6);
 
 						touching = true;
 					} else {
 						NDS::ReleaseScreen();
-						NDS::ReleaseKey(16+6);
+						NDS::ReleaseKey(16 + 6);
 
 						touching = false;
 					}
@@ -146,7 +147,7 @@ auto Emulator::handle_events() -> void {
 					// Just in case
 					touching = false;
 					NDS::ReleaseScreen();
-					NDS::ReleaseKey(16+6);
+					NDS::ReleaseKey(16 + 6);
 				}
 				break;
 			case SDL_CONTROLLERDEVICEADDED: {

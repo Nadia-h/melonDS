@@ -7,8 +7,8 @@
 #include "PlatformConfig.h"
 
 EmuWindow::EmuWindow() :
-	window(), rend(), emu_texture(), fullscreen()
-{
+	window(), rend(), emu_texture(), fullscreen() {
+
 	auto scale = Config::default_scale;
 	window = SDL_CreateWindow(
 		"melonDS", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,

@@ -14,14 +14,12 @@
 Emulator* emulator;
 InputDialog* input_dialog;
 
-void audio_callback(void* data, Uint8* stream, int len)
-{
+void audio_callback(void* data, Uint8* stream, int len) {
 	(void) data;
 	emulator->read_audio((s16*) stream, len >> 2);
 }
 
-int emu_thread(void* data)
-{
+int emu_thread(void* data) {
 	(void) data;
 	FPSmanager fps;
 	SDL_initFramerate(&fps);
@@ -41,8 +39,7 @@ int emu_thread(void* data)
 
 	SDL_PauseAudio(0);
 
-	while (emulator->is_running())
-	{
+	while (emulator->is_running()) {
 		emulator->run_frame();
 		if (Config::use_framelimit)
 			SDL_framerateDelay(&fps);
@@ -51,23 +48,19 @@ int emu_thread(void* data)
 	return 0;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	bool has_rom = false;
 
-	if (argc > 1)
-	{
+	if (argc > 1) {
 		has_rom = true;
 	}
 
-	if (!setup_config_path(NULL))
-	{
+	if (!setup_config_path(NULL)) {
 		printf("Could not set up config directory.\n");
 		return 1;
 	}
 
-	if (SDL_Init(SDL_INIT_EVERYTHING))
-	{
+	if (SDL_Init(SDL_INIT_EVERYTHING)) {
 		printf("SDL initialization failed: %s\n", SDL_GetError());
 		return 1;
 	}
@@ -76,49 +69,38 @@ int main(int argc, char** argv)
 
 	emulator = new Emulator();
 
-	if (has_rom)
-	{
+	if (has_rom) {
 		int arglen = strlen(argv[1]);
 		char* sav_name = (char*) malloc(arglen);
 		strcpy(sav_name, argv[1]);
 		strcpy(sav_name + (arglen - 4), ".sav");
 		emulator->load_rom(argv[1], sav_name, false);
-	}
-	else
-	{
+	} else {
 		emulator->load_firmware();
 	}
 
 	SDL_Thread* emu = SDL_CreateThread(emu_thread, "melonDS emulator thread", NULL);
 
 	SDL_Event e;
-	while (emulator->is_running())
-	{
-		if (input_dialog != nullptr)
-		{
+	while (emulator->is_running()) {
+		if (input_dialog != nullptr) {
 			input_dialog->run();
 		}
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
+		while (SDL_PollEvent(&e)) {
+			switch (e.type) {
 				case SDL_QUIT:
 					emulator->stop();
 					break;
 				case SDL_KEYUP:
-					if (input_dialog != nullptr)
-					{
+					if (input_dialog != nullptr) {
 						input_dialog->key(e.key.keysym.sym);
-						if (input_dialog->is_done())
-						{
+						if (input_dialog->is_done()) {
 							delete input_dialog;
 							input_dialog = nullptr;
 							emulator->set_paused(false);
 						}
 						break;
-					}
-					else if (e.key.keysym.sym == SDLK_F12)
-					{
+					} else if (e.key.keysym.sym == SDLK_F12) {
 						input_dialog = new InputDialog();
 						emulator->set_paused(true);
 						break;
@@ -129,8 +111,7 @@ int main(int argc, char** argv)
 					if (input_dialog == nullptr)
 						emulator->queue_event(e);
 					break;
-				default:
-				{
+				default: {
 					emulator->queue_event(e);
 					break;
 				}
